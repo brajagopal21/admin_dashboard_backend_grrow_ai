@@ -17,6 +17,9 @@ const signupUser = async (req, res) => {
       email,
       password: ciphertext,
       isAdmin: false,
+      subscription: "free",
+      type: "free",
+      purchasedAt: Date.now(),
     });
     await newUser.save();
     const token = jwt.sign(

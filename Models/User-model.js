@@ -6,6 +6,9 @@ const UsersSchema = new Schema(
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     isAdmin: { type: Boolean },
+    subscription: { type: String },
+    type: { type: String },
+    purchasedAt: { type: Date },
   },
   {
     timestamps: true,
