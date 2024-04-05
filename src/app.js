@@ -1,0 +1,13 @@
+import express from "express";
+import bodyParser from "body-parser";
+import { configDotenv } from "dotenv";
+import cors from "cors";
+import appRouter from "./Routes/index.js";
+import cookieParser from "cookie-parser";
+configDotenv();
+const app = express();
+app.use(cors({ origin: "http://localhost:3000", credentials: true }));
+app.use(bodyParser.json());
+app.use(cookieParser(process.env.COOKIE_SECRET_KEY));
+app.use("/api", appRouter);
+export default app;
