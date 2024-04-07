@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 configDotenv();
 export const verifyToken = async (req, res, next) => {
   const { token } = req.body;
-  console.log(token);
+
   if (!token || token.trim() === "") {
     return res.status(401).json({ message: "Token NotFound" });
   }
@@ -14,7 +14,6 @@ export const verifyToken = async (req, res, next) => {
         reject(err.message);
         return res.status(401).json({ message: "Token Expired" });
       } else {
-        console.log("token verification successful");
         resolve();
         res.locals.jwtData = data;
         return next();

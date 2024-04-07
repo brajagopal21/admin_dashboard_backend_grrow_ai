@@ -6,7 +6,7 @@ const generateContent = async (req, res) => {
     console.log(prompt);
     const user = await User.findById(res.locals.jwtData.id);
     if (!user) {
-      return res.status(404).json({ message: "User Not register" });
+      return res.status(404).json({ message: "User Not registered" });
     }
     const chats = user.chats;
     // const openai = configureOpenAi();

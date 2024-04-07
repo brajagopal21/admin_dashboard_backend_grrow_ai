@@ -4,10 +4,13 @@ const userSubscription = new Schema({
   subscriptionType: { type: String, required: true },
   purchasedAt: { type: Date, required: true },
 });
-const chatSchema = new Schema({
-  prompt: { type: String, required: true },
-  content: { type: String, required: true },
-});
+const chatSchema = new Schema(
+  {
+    prompt: { type: String, required: true },
+    content: { type: String, required: true },
+  },
+  { timestamps: true }
+);
 const UsersSchema = new Schema(
   {
     name: { type: String, required: true },
