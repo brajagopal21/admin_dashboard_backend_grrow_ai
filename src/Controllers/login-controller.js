@@ -20,7 +20,12 @@ const loginUser = async (req, res) => {
     }
     if (email === user.email && password === originalPassword) {
       const token = jwt.sign(
-        { success: true, email: user.email, name: user.name },
+        {
+          success: true,
+          email: user.email,
+          name: user.name,
+          id: user._id,
+        },
         `${process.env.SECRET_KEY}`,
         { expiresIn: "7d" }
       );

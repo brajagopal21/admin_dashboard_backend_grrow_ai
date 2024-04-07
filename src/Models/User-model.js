@@ -5,7 +5,7 @@ const userSubscription = new Schema({
   purchasedAt: { type: Date, required: true },
 });
 const chatSchema = new Schema({
-  role: { type: String, required: true },
+  prompt: { type: String, required: true },
   content: { type: String, required: true },
 });
 const UsersSchema = new Schema(

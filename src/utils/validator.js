@@ -22,7 +22,10 @@ export const LoginValidator = [
     .isLength({ min: 6 })
     .withMessage("Password is required"),
 ];
-export const SignupVaidator = [
+export const SignupValidator = [
   body("name").trim().notEmpty().withMessage("Name is required"),
   ...LoginValidator,
+];
+export const ChatValidator = [
+  body("prompt").trim().notEmpty().withMessage("Message is required"),
 ];
