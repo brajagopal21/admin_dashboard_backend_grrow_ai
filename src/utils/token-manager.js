@@ -1,9 +1,20 @@
 import { configDotenv } from "dotenv";
 import jwt from "jsonwebtoken";
 configDotenv();
+export const createToken = async (data) => {
+  return jwt.sign(
+    {
+      success: true,
+      email: data.email,
+      name: data.name,
+      id: data.id,
+    },
+    `${process.env.SECRET_KEY}`,
+    { expiresIn: "7d" }
+  );
+};
 export const verifyToken = async (req, res, next) => {
-  const { token } = req.body;
-
+  const { token } = req.headers;
   if (!token || token.trim() === "") {
     return res.status(401).json({ message: "Token NotFound" });
   }

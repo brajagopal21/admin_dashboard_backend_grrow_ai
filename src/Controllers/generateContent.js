@@ -35,11 +35,12 @@ const generateContent = async (req, res) => {
       content: chatResponse?.choices[0]?.text,
     };
     chats.push(newResponse);
-    console.log(user.chats);
+    const id = chats[chats.length - 1]._id;
     await user.save();
     return res.status(200).json({
       success: true,
       chat: newResponse,
+      id,
     });
   } catch (error) {
     return res.status(500).json({

@@ -19,7 +19,7 @@ export const LoginValidator = [
   body("password")
     .trim()
     .notEmpty()
-    .isLength({ min: 6 })
+    .isLength({ min: 1 })
     .withMessage("Password is required"),
 ];
 export const SignupValidator = [
