@@ -10,6 +10,22 @@ const signupUser = async (req, res) => {
     const ExistingUser = await User.findOne({ email });
 
     if (ExistingUser) {
+      if (ExistingUser.provider === "google provider") {
+        const token = await createToken({
+          email: ExistingUser.email,
+          name: ExistingUser.name,
+          id: ExistingUser._id,
+          profileImage: ExistingUser.profileImage,
+        });
+        return res.status(200).json({
+          token: token,
+          message: "User Created Successfully",
+          id: ExistingUser._id.toString(),
+          name: ExistingUser.name,
+          email: ExistingUser.email,
+          profileImage: ExistingUser.profileImage,
+        });
+      }
       return res.status(400).json({
         message: "User Already Exist",
         email: ExistingUser.email,
@@ -41,6 +57,7 @@ const signupUser = async (req, res) => {
       email: newUser.email,
       name: newUser.name,
       id: newUser._id,
+      profileImage: newUser.profileImage,
     });
     console.log(token);
 

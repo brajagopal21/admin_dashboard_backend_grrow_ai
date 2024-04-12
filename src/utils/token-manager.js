@@ -8,6 +8,7 @@ export const createToken = async (data) => {
       email: data.email,
       name: data.name,
       id: data.id,
+      profileImage: data.profileImage,
     },
     `${process.env.SECRET_KEY}`,
     { expiresIn: "7d" }

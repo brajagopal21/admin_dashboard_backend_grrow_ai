@@ -2,6 +2,7 @@ import CryptoJS from "crypto-js";
 import jwt from "jsonwebtoken";
 import User from "../Models/User-model.js";
 import { configDotenv } from "dotenv";
+import { createToken } from "../utils/token-manager.js";
 configDotenv();
 const loginUser = async (req, res) => {
   try {
@@ -19,16 +20,12 @@ const loginUser = async (req, res) => {
       return res.status(401).send("Invalid Credentials");
     }
     if (email === user.email && password === originalPassword) {
-      const token = jwt.sign(
-        {
-          success: true,
-          email: user.email,
-          name: user.name,
-          id: user._id,
-        },
-        `${process.env.SECRET_KEY}`,
-        { expiresIn: "7d" }
-      );
+      const token = await createToken({
+        email: user.email,
+        name: user.name,
+        id: user._id,
+        profileImage: user.profileImage,
+      });
 
       return res.status(200).json({
         message: "User Loggedin Successfully",
