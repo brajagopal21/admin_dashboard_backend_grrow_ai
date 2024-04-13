@@ -1,5 +1,11 @@
 import { Schema, mongoose } from "mongoose";
-const user = new Schema({});
+const user = new Schema({
+  name: { type: String, required: true },
+  email: { type: String, required: true, unique: true },
+  password: { type: String, required: true },
+  profileImage: { type: String, required: true },
+  provider: { type: String, required: true },
+});
 const userSubscription = new Schema({
   subscriptionName: { type: String, required: true },
   subscriptionType: { type: String, required: true },
@@ -15,11 +21,8 @@ const chatSchema = new Schema(
 
 const UsersSchema = new Schema(
   {
-    name: { type: String, required: true },
-    email: { type: String, required: true, unique: true },
-    password: { type: String },
-    profileImage: { type: String },
-    provider: { type: String },
+    email: { type: String, required: true },
+    user: user,
     isAdmin: { type: Boolean, required: true },
     subscription: [userSubscription],
     chats: [chatSchema],
