@@ -6,33 +6,14 @@ configDotenv();
 const signupUser = async (req, res) => {
   try {
     const { name, email, password, image, provider } = req.body;
-    console.log("data", name, email, password, image, provider);
+    console.log(name, email, password, image, provider);
     const ExistingUser = await User.findOne({ email });
     console.log(ExistingUser);
     if (ExistingUser) {
-      if (ExistingUser.user.provider === provider) {
-        const token = await createToken({
-          email: ExistingUser.email,
-          name: ExistingUser.user.name,
-          id: ExistingUser._id,
-          profileImage: ExistingUser.user.profileImage,
-        });
-
-        console.log(token);
-        return res.status(200).json({
-          token: token,
-          message: "User Created Successfully",
-          id: ExistingUser._id.toString(),
-          name: ExistingUser.user.name,
-          email: ExistingUser.user.email,
-          profileImage: ExistingUser.user.profileImage,
-        });
-      } else {
-        return res.status(400).json({
-          message: "User Already Exist",
-          email: ExistingUser.user.email,
-        });
-      }
+      return res.status(400).json({
+        message: "User Already Exist",
+        email: ExistingUser.user.email,
+      });
     } else {
       const ciphertext = CryptoJS.AES.encrypt(
         password,
@@ -48,14 +29,6 @@ const signupUser = async (req, res) => {
           profileImage: image,
           provider: provider,
         },
-        isAdmin: false,
-        subscription: [
-          {
-            subscriptionName: "Growth",
-            subscriptionType: "Annually",
-            purchasedAt: Date.now(),
-          },
-        ],
       });
       await newUser.save();
       console.log(await newUser);
