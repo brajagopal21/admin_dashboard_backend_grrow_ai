@@ -15,8 +15,9 @@ chatRoutes.post(
   generateContent
 );
 //Search Console API
-chatRoutes.get("/searchConsole/:siteUrl", verifyToken, async (req, res) => {
+chatRoutes.get("/searchConsole/:siteUrl", async (req, res) => {
   const { siteUrl } = req.params;
+  console.log(siteUrl);
   try {
     const searchDataResult = await searchData(siteUrl);
     res.json(searchDataResult);
