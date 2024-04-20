@@ -2,35 +2,37 @@ import CryptoJS from "crypto-js";
 import { configDotenv } from "dotenv";
 import { createToken } from "../utils/token-manager.js";
 import User from "../Models/User-model.js";
+import sendWelcomeEmail from "../services/emailServices.js"; // Import sendWelcomeEmail function
+
 configDotenv();
+
 const signupUser = async (req, res) => {
   try {
     const { name, email, password, image, provider } = req.body;
-    console.log("data", name, email, password, image, provider);
-    const ExistingUser = await User.findOne({ email });
-    console.log(ExistingUser);
-    if (ExistingUser) {
-      if (ExistingUser.user.provider === provider) {
+
+    const existingUser = await User.findOne({ email });
+
+    if (existingUser) {
+      if (existingUser.user.provider === provider) {
         const token = await createToken({
-          email: ExistingUser.email,
-          name: ExistingUser.user.name,
-          id: ExistingUser._id,
-          profileImage: ExistingUser.user.profileImage,
+          email: existingUser.email,
+          name: existingUser.user.name,
+          id: existingUser._id,
+          profileImage: existingUser.user.profileImage,
         });
 
-        console.log(token);
         return res.status(200).json({
           token: token,
           message: "User Created Successfully",
-          id: ExistingUser._id.toString(),
-          name: ExistingUser.user.name,
-          email: ExistingUser.user.email,
-          profileImage: ExistingUser.user.profileImage,
+          id: existingUser._id.toString(),
+          name: existingUser.user.name,
+          email: existingUser.user.email,
+          profileImage: existingUser.user.profileImage,
         });
       } else {
         return res.status(400).json({
-          message: "User Already Exist",
-          email: ExistingUser.user.email,
+          message: "User Already Exists",
+          email: existingUser.user.email,
         });
       }
     } else {
@@ -38,7 +40,7 @@ const signupUser = async (req, res) => {
         password,
         `${process.env.SECRET_KEY}`
       ).toString();
-      console.log(ciphertext);
+
       const newUser = new User({
         email: email,
         user: {
@@ -57,27 +59,35 @@ const signupUser = async (req, res) => {
           },
         ],
       });
-      await newUser.save();
-      console.log(await newUser);
+
+      const savedUser = await newUser.save();
+
+      if (!savedUser) {
+        return res.status(500).json({ message: "Error creating user" });
+      }
+
       const token = await createToken({
-        email: newUser.user.email,
-        name: newUser.user.name,
-        id: newUser._id,
-        profileImage: newUser.user.profileImage,
+        email: savedUser.user.email,
+        name: savedUser.user.name,
+        id: savedUser._id,
+        profileImage: savedUser.user.profileImage,
       });
-      console.log(token);
+
+      // Send welcome email
+      await sendWelcomeEmail(email, name);
 
       return res.status(200).json({
         token: token,
         message: "User Created Successfully",
-        id: newUser._id.toString(),
-        name: newUser.user.name,
-        email: newUser.user.email,
-        profileImage: newUser.user.profileImage,
+        id: savedUser._id.toString(),
+        name: savedUser.user.name,
+        email: savedUser.user.email,
+        profileImage: savedUser.user.profileImage,
       });
     }
   } catch (error) {
     return res.status(500).json({ message: error });
   }
 };
+
 export default signupUser;

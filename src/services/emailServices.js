@@ -1,35 +1,46 @@
+import sendpulse from "sendpulse-api";
 import { configDotenv } from "dotenv";
+
 configDotenv();
-const sendpulse = require("sendpulse-api");
 
-const apiKey = process.env.SENDPULSE_API_KEY;
-const username = process.env.SENDPULSE_SMTP_USERNAME;
+const API_USER_ID = process.env.SENDPULSE_SMTP_USERNAME;
+const API_SECRET = process.env.SENDPULSE_API_KEY;
+const TOKEN_STORAGE = "/tmp/";
 
-async function sendEmail(recipientEmail, subject, body) {
-  sendpulse.init(apiKey);
+sendpulse.init(API_USER_ID, API_SECRET, TOKEN_STORAGE, (token) => {
+  if (token && token.is_error) {
+    console.error("SendPulse error:", token.message);
+  } else {
+    console.log("SendPulse token:", token);
+  }
+});
 
-  const email = {
+function sendWelcomeEmail(email, name) {
+  const welcomeEmail = {
+    html: `<h1>Welcome to our Platform, ${name}!</h1>
+            <p>Thank you for signing up. We're excited to have you on board.</p>
+            `,
+    text: `Welcome to our Platform, ${name}! Thank you for signing up.`,
+    subject: "Welcome to Grrow",
     from: {
-      email: username,
-      name: "Grrow Company",
+      name: "brajagopal",
+      email: "brajagopalmukherjee21@gmail.com",
     },
     to: [
       {
-        email: recipientEmail,
+        name: name,
+        email: email,
       },
     ],
-    subject,
-    html: body,
   };
 
-  try {
-    const response = await sendpulse.smtpSendEmail(email);
-    console.log("Email sent successfully:", response.data);
-  } catch (error) {
-    console.error("Error sending email:", error);
-  }
+  sendpulse.smtpSendMail((data) => {
+    if (data && data.is_error) {
+      console.error("SendPulse error sending email:", data.message);
+    } else {
+      console.log("Welcome email sent successfully:", data);
+    }
+  }, welcomeEmail);
 }
 
-module.exports = {
-  sendEmail,
-};
+export default sendWelcomeEmail;
