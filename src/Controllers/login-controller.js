@@ -7,17 +7,22 @@ const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
-    console.log(user);
     if (!user) {
-      return res.status(404).send("User not register");
+      return res.status(404).json({ meaasge: "User not register" });
+    }
+    if (!user.user.password && user.user.provider === "google") {
+      return res.status(404).json({ message: "Please Login With GOOGLE" });
     }
     const bytes = CryptoJS.AES.decrypt(
       user.user.password,
       `${process.env.SECRET_KEY}`
     );
     const originalPassword = bytes.toString(CryptoJS.enc.Utf8);
+    console.log(originalPassword);
     if (email !== user.email && password !== originalPassword) {
-      return res.status(401).send("Invalid Credentials");
+      return res
+        .status(404)
+        .json({ message: "Please Enter Valid Credentials" });
     }
     if (email === user.email && password === originalPassword) {
       const token = await createToken({

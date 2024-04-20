@@ -9,9 +9,7 @@ configDotenv();
 const signupUser = async (req, res) => {
   try {
     const { name, email, password, image, provider } = req.body;
-
     const existingUser = await User.findOne({ email });
-
     if (existingUser) {
       if (existingUser.user.provider === provider) {
         const token = await createToken({
@@ -35,6 +33,14 @@ const signupUser = async (req, res) => {
           email: existingUser.user.email,
         });
       }
+    console.log(name, email, password, image, provider);
+    const ExistingUser = await User.findOne({ email });
+    console.log(ExistingUser);
+    if (ExistingUser) {
+      return res.status(400).json({
+        message: "User Already Exist",
+        email: ExistingUser.user.email,
+      });
     } else {
       const ciphertext = CryptoJS.AES.encrypt(
         password,
@@ -50,14 +56,6 @@ const signupUser = async (req, res) => {
           profileImage: image,
           provider: provider,
         },
-        isAdmin: false,
-        subscription: [
-          {
-            subscriptionName: "Growth",
-            subscriptionType: "Annually",
-            purchasedAt: Date.now(),
-          },
-        ],
       });
 
       const savedUser = await newUser.save();
