@@ -33,6 +33,7 @@ const signupUser = async (req, res) => {
           email: existingUser.user.email,
         });
       }
+    } 
     console.log(name, email, password, image, provider);
     const ExistingUser = await User.findOne({ email });
     console.log(ExistingUser);
